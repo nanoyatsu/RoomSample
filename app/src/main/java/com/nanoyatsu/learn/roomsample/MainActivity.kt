@@ -1,21 +1,18 @@
 package com.nanoyatsu.learn.roomsample
 
-import com.google.android.material.snackbar.Snackbar
+import android.os.Bundle
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-
+import com.google.android.material.snackbar.Snackbar
+import com.nanoyatsu.learn.roomsample.room.AppDataBase
+import com.nanoyatsu.learn.roomsample.room.entity.Task
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,13 +38,17 @@ class MainActivity : AppCompatActivity() {
         // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
 
+        val db = AppDataBase.getInstance()
+        val taskDao = db.taskDao()
         fab.setOnClickListener { view ->
+            val all = runBlocking(Dispatchers.IO) {
+                taskDao.insert(Task(0, "aaa", false))
+                taskDao.getAll()
+            }
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
-
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
